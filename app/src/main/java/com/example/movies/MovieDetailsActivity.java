@@ -1,5 +1,6 @@
 package com.example.movies;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -38,7 +39,6 @@ public class MovieDetailsActivity extends AppCompatActivity {
     private JSONObject myData;
     private Movie movieDetails;
     private int page;
-    private ArrayList<String> posterArray;
     private boolean loading;
 
     @BindView(R.id.coverImage)
@@ -65,7 +65,6 @@ public class MovieDetailsActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         queue = Volley.newRequestQueue(this);
         movieId = getIntent().getStringExtra(DETAIL_INTENT_STRING);
-        posterArray = new ArrayList<>();
         loading = false;
 
         //if scroll comes to the end load more movies
@@ -123,25 +122,13 @@ public class MovieDetailsActivity extends AppCompatActivity {
         //if this method is called with "more" string then more similar movies are required to load so variable page is incremented
         if (type.equals("more")){
             page++;
-            posterArray.clear();
         }
         movieDetails = new Movie();
         String url = URLS.MOVIES_API_BASE_URL + URLS.MOVIE_DETAILS_URL + movieId + URLS.MOVIE_SIMILAR_URL +  "?api_key=" + URLS.API_KEY + "&page=" + page;
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                try {
-                    myData = new JSONObject(response);
-                    JSONArray array = (JSONArray) myData.get("results");
-                    if (array.length() == 0) return;
-                    for (int i = 0; i < array.length(); i++) {
-                        JSONObject object = (JSONObject) array.get(i);
-                        posterArray.add(object.getString("poster_path"));
-                    }
-                    showSimilar();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+                    showSimilar(response);
             }
         }, new Response.ErrorListener() {
             @Override
@@ -166,14 +153,31 @@ public class MovieDetailsActivity extends AppCompatActivity {
         genresView.setText(genres.substring(1, genres.length() - 1));
     }
 
-    public void showSimilar(){
+    public void showSimilar(String response){
         LayoutInflater layoutInflater = LayoutInflater.from(this);
-        for (String posterPath: posterArray) {
-            View v = layoutInflater.inflate(R.layout.similar_movies_layout, similarLinearLayout, false);
-            similarLinearLayout.addView(v);
-            Picasso.get()
-                    .load(URLS.IMAGE_BASE_URL + posterPath)
-                    .into((ImageView) v);
+        try {
+            myData = new JSONObject(response);
+            JSONArray array = (JSONArray) myData.get("results");
+            if (array.length() == 0) return;
+            for (int i = 0; i < array.length(); i++) {
+                JSONObject  object = (JSONObject) array.get(i);
+                final String id = object.getString("id");
+                View v = layoutInflater.inflate(R.layout.similar_movies_layout, similarLinearLayout, false);
+                similarLinearLayout.addView(v);
+                v.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(getApplicationContext(), MovieDetailsActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        intent.putExtra(DETAIL_INTENT_STRING, id);
+                        getApplicationContext().startActivity(intent);
+                    }
+                });
+                Picasso.get()
+                        .load(URLS.IMAGE_BASE_URL + object.getString("poster_path"))
+                        .into((ImageView) v);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
         loading = false;
     }
