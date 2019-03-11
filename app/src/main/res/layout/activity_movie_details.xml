@@ -1,119 +1,175 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".MovieDetailsActivity">
 
-    <ImageView
-        android:id="@+id/posterImage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        android:layout_gravity="center" />
-
-    <TableLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#B1B1B1"
-        android:stretchColumns="1,2">
+        android:orientation="vertical">
 
-        <TableRow
+        <ImageView
+            android:id="@+id/posterImage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="5dp" />
+
+        <TableLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content"
+            android:stretchColumns="1,2">
 
-            <TextView
-                android:id="@+id/textView"
-                android:textStyle="bold"
-                android:background="#CACACA"
-                android:layout_margin="2dp"
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/textView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_margin="2dp"
+                    android:background="#C43ABEFF"
+                    android:gravity="center"
+                    android:padding="2dp"
+                    android:text="@string/title"
+                    android:textColor="#FFFFFF"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/titleView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="2dp"
+                    android:width="0dp"
+                    android:background="#80B2FFFF"
+                    android:ellipsize="end"
+                    android:padding="2dp"
+                    android:text="@string/title"
+                    android:textColor="#000000"
+                    android:textStyle="bold" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/textView2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_margin="2dp"
+                    android:background="#C43ABEFF"
+                    android:gravity="center"
+                    android:padding="2dp"
+                    android:paddingLeft="5dp"
+                    android:paddingRight="5dp"
+                    android:text="@string/release_date"
+                    android:textColor="#FFFFFF"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/releaseDateView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="2dp"
+                    android:background="#80B2FFFF"
+                    android:padding="2dp"
+                    android:text="@string/release_date"
+                    android:textColor="#000000" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/textView3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_margin="2dp"
+                    android:background="#C43ABEFF"
+                    android:gravity="center"
+                    android:padding="2dp"
+                    android:text="@string/genres"
+                    android:textColor="#FFFFFF"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/genresView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="2dp"
+                    android:width="0dp"
+                    android:background="#80B2FFFF"
+                    android:ellipsize="end"
+                    android:padding="2dp"
+                    android:text="@string/genres"
+                    android:textColor="#000000" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/textView4"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_margin="2dp"
+                    android:background="#C43ABEFF"
+                    android:gravity="center"
+                    android:padding="2dp"
+                    android:text="@string/overview"
+                    android:textColor="#FFFFFF"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/overviewView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="2dp"
+                    android:width="0dp"
+                    android:background="#80B2FFFF"
+                    android:ellipsize="end"
+                    android:padding="2dp"
+                    android:text="@string/overview"
+                    android:textColor="#000000" />
+            </TableRow>
+        </TableLayout>
+
+        <ImageView
+            android:id="@+id/coverImage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="5dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="2dp"
+            android:background="#C43ABEFF"
+            android:gravity="center"
+            android:padding="2dp"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            android:text="@string/similar_movies"/>
+
+
+        <HorizontalScrollView
+            android:id="@+id/similarMovies"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:id="@+id/similarLinearLayout"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/title" />
-
-            <TextView
-                android:id="@+id/titleView"
-                android:background="#CACACA"
-                android:layout_margin="2dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/title" />
-        </TableRow>
-
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" >
-
-            <TextView
-                android:id="@+id/textView2"
-                android:textStyle="bold"
-                android:background="#CACACA"
-                android:layout_margin="2dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/release_date" />
-
-            <TextView
-                android:id="@+id/releaseDateView"
-                android:background="#CACACA"
-                android:layout_margin="2dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/release_date" />
-        </TableRow>
-
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" >
-
-            <TextView
-                android:id="@+id/textView3"
-                android:textStyle="bold"
-                android:background="#CACACA"
-                android:layout_margin="2dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/genres" />
-
-            <TextView
-                android:id="@+id/genresView"
-                android:background="#CACACA"
-                android:layout_margin="2dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/genres" />
-        </TableRow>
-
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" >
-
-            <TextView
-                android:id="@+id/textView4"
-                android:textStyle="bold"
-                android:background="#CACACA"
-                android:layout_margin="2dp"
-                android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:text="@string/overview" />
-
-            <TextView
-                android:id="@+id/overviewView"
-                android:background="#CACACA"
-                android:layout_margin="2dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:maxLines="5"
-                android:width="0dp"
-                android:text="@string/overview" />
-        </TableRow>
-    </TableLayout>
-
-    <ImageView
-        android:id="@+id/coverImage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_margin="5dp" />
-</LinearLayout>
+                android:orientation="horizontal"/>
+        </HorizontalScrollView>
+    </LinearLayout>
+</ScrollView>

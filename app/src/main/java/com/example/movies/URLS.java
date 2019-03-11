@@ -7,6 +7,6 @@ public class URLS {
     public static final String POPULAR_MOVIES_URL = "/movie/popular";
     public static final String TOP_RATED_MOVIES_URL = "/movie/top_rated";
     public static final String MOVIE_DETAILS_URL = "/movie/";
-    public static final String MOVIE_SIMILAR_URL = "/similar/";
+    public static final String MOVIE_SIMILAR_URL = "/similar";
 
 }

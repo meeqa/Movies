@@ -28,6 +28,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
     @NonNull
     public MyAdapter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent,
                                                      int viewType) {
+        //inflate view with layout
         View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.movie_layout, parent, false);
         return new MyViewHolder(v);
@@ -36,6 +37,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, final int position) {
         holder.text.setText(mDataset.get(position).getTitle());
+
         Picasso.get()
                 .load(URLS.IMAGE_BASE_URL + mDataset.get(position).getPosterPath())
                 .error(R.drawable.ic_launcher_background)
@@ -46,7 +48,6 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
                 Intent intent = new Intent(mcontext, MovieDetailsActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 intent.putExtra(DETAIL_INTENT_STRING, mDataset.get(position).getId());
                 mcontext.startActivity(intent);
-
             }
         });
     }
@@ -58,7 +59,6 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
 
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
-        // each data item is just a string in this case
         private ImageView image;
         private TextView text;
         private LinearLayout linearLayout;

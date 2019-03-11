@@ -33,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
     private JSONObject myData;
     private String showingMovies;
     private int page;
+    private boolean loading;
 
     @BindView(R.id.recView)
     RecyclerView recView;
@@ -53,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
         myMovies = new ArrayList<>();
         recView.setAdapter(new MyAdapter(this.getApplicationContext(), myMovies));
 
+        loading = false;
         setListeners();
 
         showingMovies = TOP_RATED;
@@ -79,28 +81,35 @@ public class MainActivity extends AppCompatActivity {
                 getTopRatedTitles("fromTop");
             }
         });
+        //if recyclerView is scrolled to the bottom load more movies
         recView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
-
                 if (!recView.canScrollVertically(1)) {
-                    if (showingMovies.equals(MOST_POPULAR)) {
-                        getPopularTitles(MOST_POPULAR);
-                    } else {
-                        getTopRatedTitles(TOP_RATED);
+                    if (!loading) {
+                        if (showingMovies.equals(MOST_POPULAR)) {
+                            loading = true;
+                            getPopularTitles(MOST_POPULAR);
+                        } else {
+                            loading = true;
+                            getTopRatedTitles(TOP_RATED);
+                        }
                     }
                 }
             }
         });
     }
 
+    //get popular movie titles
     public void getPopularTitles(String type) {
         showingMovies = MOST_POPULAR;
+        //if movies are loaded from first page
         if (type.equals("fromTop")) {
             myMovies.clear();
             page = 1;
             recView.scrollToPosition(1);
+        //if recyclerView is scrolled to the bottom request more pages
         } else if (type.equals(MOST_POPULAR)) {
             page++;
         }
@@ -111,6 +120,7 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     myData = new JSONObject(response);
                     JSONArray array = (JSONArray) myData.get("results");
+                    if (array.length() == 0) return;
                     for (int i = 0; i < array.length(); i++) {
                         Movie data = new Movie();
                         JSONObject object = (JSONObject) array.get(i);
@@ -121,6 +131,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                     recView.getAdapter().notifyDataSetChanged();
                     popularButton.setClickable(true);
+                    loading = false;
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -135,12 +146,15 @@ public class MainActivity extends AppCompatActivity {
         queue.add(stringRequest);
     }
 
+    //get top rated titles
     public void getTopRatedTitles(String type) {
         showingMovies = TOP_RATED;
+        //if movies are loaded from first page
         if (type.equals("fromTop")) {
             myMovies.clear();
             page = 1;
             recView.scrollToPosition(1);
+        //if recyclerView is scrolled to the bottom request more pages
         } else if (type.equals(TOP_RATED)) {
             page++;
         }
@@ -151,6 +165,7 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     myData = new JSONObject(response);
                     JSONArray array = (JSONArray) myData.get("results");
+                    if (array.length() == 0) return;
                     for (int i = 0; i < array.length(); i++) {
                         Movie data = new Movie();
                         JSONObject object = (JSONObject) array.get(i);
@@ -161,6 +176,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                     recView.getAdapter().notifyDataSetChanged();
                     topRatedButton.setClickable(true);
+                    loading = false;
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
