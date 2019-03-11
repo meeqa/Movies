@@ -87,11 +87,16 @@ public class MovieDetailsActivity extends AppCompatActivity {
     }
     public void showDetails(){
         titleView.setText(movieDetails.getTitle());
-        Picasso.get().load(URLS.IMAGE_BASE_URL + movieDetails.getCoverPath()).into(coverImage);
-        Picasso.get().load(URLS.IMAGE_BASE_URL + movieDetails.getPosterPath()).into(posterImage);
+        Picasso.get()
+                .load(URLS.IMAGE_BASE_URL + movieDetails.getCoverPath())
+                .into(coverImage);
+        Picasso.get()
+                .load(URLS.IMAGE_BASE_URL + movieDetails.getPosterPath())
+                .into(posterImage);
         overviewView.setText(movieDetails.getOverview());
         releaseDateView.setText(movieDetails.getReleaseDate());
-        genresView.setText(movieDetails.getGenres().toString());
+        String genres = movieDetails.getGenres().toString();
+        genresView.setText(genres.substring(1,genres.length()-1));
     }
 
 }

@@ -2,4 +2,10 @@
     <string name="app_name">Movies</string>
     <string name="movie_name">Movie name</string>
     <string name="title_activity_movie_details">MovieDetailsActivity</string>
+    <string name="topRated">Top rated</string>
+    <string name="mostPopular">Most popular</string>
+    <string name="overview">Overview</string>
+    <string name="genres">Genres</string>
+    <string name="release_date">Release date</string>
+    <string name="title">Title</string>
 </resources>
