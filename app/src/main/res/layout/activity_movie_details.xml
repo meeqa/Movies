@@ -12,7 +12,7 @@
         android:orientation="vertical">
 
         <ImageView
-            android:id="@+id/posterImage"
+            android:id="@+id/image_poster"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -28,7 +28,6 @@
                 android:layout_height="match_parent">
 
                 <TextView
-                    android:id="@+id/textView"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_margin="2dp"
@@ -40,7 +39,7 @@
                     android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/titleView"
+                    android:id="@+id/text_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="2dp"
@@ -58,7 +57,6 @@
                 android:layout_height="match_parent">
 
                 <TextView
-                    android:id="@+id/textView2"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_margin="2dp"
@@ -72,7 +70,7 @@
                     android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/releaseDateView"
+                    android:id="@+id/text_release_date"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="2dp"
@@ -87,7 +85,6 @@
                 android:layout_height="match_parent">
 
                 <TextView
-                    android:id="@+id/textView3"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_margin="2dp"
@@ -99,7 +96,7 @@
                     android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/genresView"
+                    android:id="@+id/text_genres"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="2dp"
@@ -116,8 +113,7 @@
                 android:layout_height="match_parent">
 
                 <TextView
-                    android:id="@+id/textView4"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_margin="2dp"
                     android:background="#C43ABEFF"
@@ -128,7 +124,7 @@
                     android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/overviewView"
+                    android:id="@+id/text_overview"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="2dp"
@@ -142,7 +138,7 @@
         </TableLayout>
 
         <ImageView
-            android:id="@+id/coverImage"
+            android:id="@+id/image_cover"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -155,21 +151,21 @@
             android:background="#C43ABEFF"
             android:gravity="center"
             android:padding="2dp"
+            android:text="@string/similar_movies"
             android:textColor="#FFFFFF"
-            android:textStyle="bold"
-            android:text="@string/similar_movies"/>
+            android:textStyle="bold" />
 
 
         <HorizontalScrollView
-            android:id="@+id/similarMovies"
+            android:id="@+id/horizontal_scroll_view_similar_movies"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
             <LinearLayout
-                android:id="@+id/similarLinearLayout"
+                android:id="@+id/linear_layout_similar_movies"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:orientation="horizontal"/>
+                android:orientation="horizontal" />
         </HorizontalScrollView>
     </LinearLayout>
 </ScrollView>

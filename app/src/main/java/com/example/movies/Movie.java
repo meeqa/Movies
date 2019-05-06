@@ -3,15 +3,15 @@ package com.example.movies;
 import java.util.ArrayList;
 
 public class Movie {
+    private ArrayList<String> genres;
     private String id;
     private String title;
     private String posterPath;
     private String coverPath;
     private String releaseDate;
     private String overview;
-    private ArrayList<String> genres;
 
-    public Movie(){
+    public Movie() {
         genres = new ArrayList<>();
     }
 
@@ -71,7 +71,7 @@ public class Movie {
         this.genres = genres;
     }
 
-    public void addGenre(String genre){
+    public void addGenre(String genre) {
         this.genres.add(genre);
     }
 }

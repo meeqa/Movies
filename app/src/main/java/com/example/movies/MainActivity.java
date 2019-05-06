@@ -1,9 +1,9 @@
 package com.example.movies;
 
 import android.graphics.Color;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -26,59 +26,67 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity {
-    private static String TOP_RATED = "top_rated_movies";
-    private static String MOST_POPULAR = "most_popular_movies";
+    public static final String API_KEY_REQUEST = "?api_key=";
+    public static final String PAGE_REQUEST = "&page=";
+
+    private static final String TOP_RATED = "top_rated_movies";
+    private static final String MOST_POPULAR = "most_popular_movies";
+    private static final String FROM_TOP = "FROM_TOP";
+    private static final String DATA_RESULT = "result";
+    private static final String DATA_ID = "id";
+    private static final String DATA_TITLE = "title";
+    private static final String DATA_POSTER_PATH = "poster_path";
+    @BindView(R.id.recycler_view)
+    RecyclerView recView;
+    @BindView(R.id.button_popular)
+    Button btnPopular;
+    @BindView(R.id.button_top_rated)
+    Button btnTopRated;
     private ArrayList<Movie> myMovies;
+    private int page;
+    private boolean loading;
     private RequestQueue queue;
     private JSONObject myData;
     private String showingMovies;
-    private int page;
-    private boolean loading;
-
-    @BindView(R.id.recView)
-    RecyclerView recView;
-    @BindView(R.id.popularButton)
-    Button popularButton;
-    @BindView(R.id.topRatedButton)
-    Button topRatedButton;
-
+    private String url;
+    private StringRequest stringRequest;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        queue = Volley.newRequestQueue(this);
 
-        recView.setLayoutManager(new LinearLayoutManager(this));
+        queue = Volley.newRequestQueue(this);
         myMovies = new ArrayList<>();
+        recView.setLayoutManager(new LinearLayoutManager(this));
         recView.setAdapter(new MyAdapter(this.getApplicationContext(), myMovies));
 
         loading = false;
         setListeners();
 
         showingMovies = TOP_RATED;
-        topRatedButton.setBackgroundColor(Color.GRAY);
-        getTopRatedTitles("fromTop");
+        btnTopRated.setBackgroundColor(Color.GRAY);
+        getTopRatedTitles(FROM_TOP);
     }
 
     public void setListeners() {
-        popularButton.setOnClickListener(new View.OnClickListener() {
+        btnPopular.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                popularButton.setClickable(false);
-                popularButton.setBackgroundColor(Color.GRAY);
-                topRatedButton.setBackgroundColor(Color.LTGRAY);
-                getPopularTitles("fromTop");
+                btnPopular.setClickable(false);
+                btnPopular.setBackgroundColor(Color.GRAY);
+                btnTopRated.setBackgroundColor(Color.LTGRAY);
+                getPopularTitles(FROM_TOP);
             }
         });
-        topRatedButton.setOnClickListener(new View.OnClickListener() {
+        btnTopRated.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                topRatedButton.setClickable(false);
-                popularButton.setBackgroundColor(Color.LTGRAY);
-                topRatedButton.setBackgroundColor(Color.GRAY);
-                getTopRatedTitles("fromTop");
+                btnTopRated.setClickable(false);
+                btnPopular.setBackgroundColor(Color.LTGRAY);
+                btnTopRated.setBackgroundColor(Color.GRAY);
+                getTopRatedTitles(FROM_TOP);
             }
         });
         //if recyclerView is scrolled to the bottom load more movies
@@ -105,32 +113,39 @@ public class MainActivity extends AppCompatActivity {
     public void getPopularTitles(String type) {
         showingMovies = MOST_POPULAR;
         //if movies are loaded from first page
-        if (type.equals("fromTop")) {
+        if (type.equals(FROM_TOP)) {
             myMovies.clear();
             page = 1;
             recView.scrollToPosition(1);
-        //if recyclerView is scrolled to the bottom request more pages
+            //if recyclerView is scrolled to the bottom request more pages
         } else if (type.equals(MOST_POPULAR)) {
             page++;
         }
-        String url = URLS.MOVIES_API_BASE_URL + URLS.POPULAR_MOVIES_URL + "?api_key=" + URLS.API_KEY + "&page=" + page;
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
+        url = URLS.MOVIES_API_BASE_URL
+                + URLS.POPULAR_MOVIES_URL
+                + API_KEY_REQUEST
+                + URLS.API_KEY
+                + PAGE_REQUEST
+                + page;
+        stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 try {
                     myData = new JSONObject(response);
-                    JSONArray array = (JSONArray) myData.get("results");
+                    JSONArray array = (JSONArray) myData.get(DATA_RESULT);
                     if (array.length() == 0) return;
                     for (int i = 0; i < array.length(); i++) {
                         Movie data = new Movie();
                         JSONObject object = (JSONObject) array.get(i);
-                        data.setId(String.valueOf(object.get("id")));
-                        data.setTitle((String) object.get("title"));
-                        data.setPosterPath((String) object.get("poster_path"));
+                        data.setId(String.valueOf(object.get(DATA_ID)));
+                        data.setTitle((String) object.get(DATA_TITLE));
+                        data.setPosterPath((String) object.get(DATA_POSTER_PATH));
                         myMovies.add(data);
                     }
-                    recView.getAdapter().notifyDataSetChanged();
-                    popularButton.setClickable(true);
+                    if (recView.getAdapter() != null) {
+                        recView.getAdapter().notifyDataSetChanged();
+                    }
+                    btnPopular.setClickable(true);
                     loading = false;
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -150,32 +165,39 @@ public class MainActivity extends AppCompatActivity {
     public void getTopRatedTitles(String type) {
         showingMovies = TOP_RATED;
         //if movies are loaded from first page
-        if (type.equals("fromTop")) {
+        if (type.equals(FROM_TOP)) {
             myMovies.clear();
             page = 1;
             recView.scrollToPosition(1);
-        //if recyclerView is scrolled to the bottom request more pages
+            //if recyclerView is scrolled to the bottom request more pages
         } else if (type.equals(TOP_RATED)) {
             page++;
         }
-        String url = URLS.MOVIES_API_BASE_URL + URLS.TOP_RATED_MOVIES_URL + "?api_key=" + URLS.API_KEY + "&page=" + page;
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
+        url = URLS.MOVIES_API_BASE_URL
+                + URLS.TOP_RATED_MOVIES_URL
+                + API_KEY_REQUEST
+                + URLS.API_KEY
+                + PAGE_REQUEST
+                + page;
+        stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 try {
                     myData = new JSONObject(response);
-                    JSONArray array = (JSONArray) myData.get("results");
+                    JSONArray array = (JSONArray) myData.get(DATA_RESULT);
                     if (array.length() == 0) return;
                     for (int i = 0; i < array.length(); i++) {
                         Movie data = new Movie();
                         JSONObject object = (JSONObject) array.get(i);
-                        data.setId(String.valueOf(object.get("id")));
-                        data.setTitle((String) object.get("title"));
-                        data.setPosterPath((String) object.get("poster_path"));
+                        data.setId(String.valueOf(object.get(DATA_ID)));
+                        data.setTitle((String) object.get(DATA_TITLE));
+                        data.setPosterPath((String) object.get(DATA_POSTER_PATH));
                         myMovies.add(data);
                     }
-                    recView.getAdapter().notifyDataSetChanged();
-                    topRatedButton.setClickable(true);
+                    if (recView.getAdapter() != null) {
+                        recView.getAdapter().notifyDataSetChanged();
+                    }
+                    btnTopRated.setClickable(true);
                     loading = false;
                 } catch (JSONException e) {
                     e.printStackTrace();

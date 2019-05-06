@@ -12,39 +12,39 @@
         android:layout_height="wrap_content">
 
         <Button
-            android:id="@+id/popularButton"
+            android:id="@+id/button_popular"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
-            android:padding="2dp"
             android:background="#d3d3d3"
+            android:padding="2dp"
             android:text="@string/mostPopular"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/topRatedButton"
+            app:layout_constraintEnd_toStartOf="@+id/button_top_rated"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <Button
-            android:id="@+id/topRatedButton"
+            android:id="@+id/button_top_rated"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
-            android:padding="2dp"
             android:background="#d3d3d3"
+            android:padding="2dp"
             android:text="@string/topRated"
-            app:layout_constraintStart_toEndOf="@+id/popularButton"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/button_popular"
             app:layout_constraintTop_toTopOf="parent" />
     </android.support.constraint.ConstraintLayout>
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/recView"
+        android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 

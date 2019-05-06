@@ -10,18 +10,20 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import com.squareup.picasso.Picasso;
+
 import java.util.ArrayList;
 
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
-    private ArrayList<Movie> mDataset;
-
-    private Context mcontext;
     private static String DETAIL_INTENT_STRING = "MOVIE_DETAILS";
 
+    private ArrayList<Movie> moviesArray;
+    private Context context;
+
     public MyAdapter(Context context, ArrayList<Movie> myDataset) {
-        mDataset = myDataset;
-        this.mcontext = context;
+        moviesArray = myDataset;
+        this.context = context;
     }
 
     @Override
@@ -36,25 +38,25 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, final int position) {
-        holder.text.setText(mDataset.get(position).getTitle());
-
+        holder.text.setText(moviesArray.get(position).getTitle());
         Picasso.get()
-                .load(URLS.IMAGE_BASE_URL + mDataset.get(position).getPosterPath())
+                .load(URLS.IMAGE_BASE_URL + moviesArray.get(position).getPosterPath())
                 .error(R.drawable.ic_launcher_background)
                 .into(holder.image);
+
         holder.linearLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(mcontext, MovieDetailsActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.putExtra(DETAIL_INTENT_STRING, mDataset.get(position).getId());
-                mcontext.startActivity(intent);
+                Intent intent = new Intent(context, MovieDetailsActivity.class).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.putExtra(DETAIL_INTENT_STRING, moviesArray.get(position).getId());
+                context.startActivity(intent);
             }
         });
     }
 
     @Override
     public int getItemCount() {
-        return mDataset.size();
+        return moviesArray.size();
     }
 
 

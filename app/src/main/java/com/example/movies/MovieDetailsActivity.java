@@ -2,11 +2,7 @@ package com.example.movies;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.HorizontalScrollView;
@@ -26,55 +22,62 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class MovieDetailsActivity extends AppCompatActivity {
-    private static String DETAIL_INTENT_STRING = "MOVIE_DETAILS";
+    private static final String DETAIL_INTENT_STRING = "MOVIE_DETAILS";
+    private static final String LOAD_MORE = "LOAD_MORE";
+    private static final String DATA_ID = "id";
+    private static final String DATA_TITLE = "title";
+    private static final String DATA_POSTER_PATH = "poster_path";
+    private static final String DATA_COVER_PATH = "backdrop_path";
+    private static final String DATA_RELEASE_DATE = "release_date";
+    private static final String DATA_OVERVIEW = "overview";
+    private static final String DATA_GENRES = "genres";
+    private static final String DATA_NAME = "name";
+    private static final String DATA_RESULTS = "results";
+    @BindView(R.id.image_cover)
+    ImageView imageCover;
+    @BindView(R.id.image_poster)
+    ImageView imagePoster;
+    @BindView(R.id.text_title)
+    TextView textTitle;
+    @BindView(R.id.text_overview)
+    TextView textOverview;
+    @BindView(R.id.text_release_date)
+    TextView textReleaseDate;
+    @BindView(R.id.text_genres)
+    TextView textGenres;
+    @BindView(R.id.linear_layout_similar_movies)
+    LinearLayout linearLayoutSimilarMovies;
+    @BindView(R.id.horizontal_scroll_view_similar_movies)
+    HorizontalScrollView horizontalScrollSimilarMovies;
+    private int page;
+    private boolean loading;
     private String movieId;
     private RequestQueue queue;
     private JSONObject myData;
     private Movie movieDetails;
-    private int page;
-    private boolean loading;
-
-    @BindView(R.id.coverImage)
-    ImageView coverImage;
-    @BindView(R.id.posterImage)
-    ImageView posterImage;
-    @BindView(R.id.titleView)
-    TextView titleView;
-    @BindView(R.id.overviewView)
-    TextView overviewView;
-    @BindView(R.id.releaseDateView)
-    TextView releaseDateView;
-    @BindView(R.id.genresView)
-    TextView genresView;
-    @BindView(R.id.similarLinearLayout)
-    LinearLayout similarLinearLayout;
-    @BindView(R.id.similarMovies)
-    HorizontalScrollView horizontalScrollView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_details);
         ButterKnife.bind(this);
+
         queue = Volley.newRequestQueue(this);
         movieId = getIntent().getStringExtra(DETAIL_INTENT_STRING);
         loading = false;
 
         //if scroll comes to the end load more movies
-        horizontalScrollView.setOnScrollChangeListener(new View.OnScrollChangeListener() {
+        horizontalScrollSimilarMovies.setOnScrollChangeListener(new View.OnScrollChangeListener() {
             @Override
             public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
-                if(!horizontalScrollView.canScrollHorizontally(1)){
-                    if (!loading){
+                if (!horizontalScrollSimilarMovies.canScrollHorizontally(1)) {
+                    if (!loading) {
                         loading = true;
-                        getSimilarMovies("more");
+                        getSimilarMovies(LOAD_MORE);
                     }
                 }
             }
@@ -82,26 +85,30 @@ public class MovieDetailsActivity extends AppCompatActivity {
 
         getMovieDetails();
         page = 1;
-        getSimilarMovies("empty");
+        getSimilarMovies("");
     }
 
     public void getMovieDetails() {
         movieDetails = new Movie();
-        String url = URLS.MOVIES_API_BASE_URL + URLS.MOVIE_DETAILS_URL + movieId + "?api_key=" + URLS.API_KEY;
+        String url = URLS.MOVIES_API_BASE_URL
+                + URLS.MOVIE_DETAILS_URL
+                + movieId
+                + MainActivity.API_KEY_REQUEST
+                + URLS.API_KEY;
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 try {
                     myData = new JSONObject(response);
                     movieDetails.setId(movieId);
-                    movieDetails.setTitle((String) myData.get("title"));
-                    movieDetails.setPosterPath((String) myData.get("poster_path"));
-                    movieDetails.setCoverPath((String) myData.get("backdrop_path"));
-                    movieDetails.setReleaseDate((String) myData.get("release_date"));
-                    movieDetails.setOverview((String) myData.get("overview"));
-                    JSONArray arr = (JSONArray) myData.get("genres");
+                    movieDetails.setTitle((String) myData.get(DATA_TITLE));
+                    movieDetails.setPosterPath((String) myData.get(DATA_POSTER_PATH));
+                    movieDetails.setCoverPath((String) myData.get(DATA_COVER_PATH));
+                    movieDetails.setReleaseDate((String) myData.get(DATA_RELEASE_DATE));
+                    movieDetails.setOverview((String) myData.get(DATA_OVERVIEW));
+                    JSONArray arr = (JSONArray) myData.get(DATA_GENRES);
                     for (int i = 0; i < arr.length(); i++) {
-                        movieDetails.addGenre((String) ((JSONObject) arr.get(i)).get("name"));
+                        movieDetails.addGenre((String) ((JSONObject) arr.get(i)).get(DATA_NAME));
                     }
                     showDetails();
 
@@ -112,58 +119,66 @@ public class MovieDetailsActivity extends AppCompatActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-
+                error.printStackTrace();
             }
         });
         queue.add(stringRequest);
     }
 
-    public void getSimilarMovies(String type){
+    public void getSimilarMovies(String type) {
         //if this method is called with "more" string then more similar movies are required to load so variable page is incremented
-        if (type.equals("more")){
+        if (type.equals(LOAD_MORE)) {
             page++;
         }
         movieDetails = new Movie();
-        String url = URLS.MOVIES_API_BASE_URL + URLS.MOVIE_DETAILS_URL + movieId + URLS.MOVIE_SIMILAR_URL +  "?api_key=" + URLS.API_KEY + "&page=" + page;
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                    showSimilar(response);
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-
-            }
-        });
+        String url = URLS.MOVIES_API_BASE_URL
+                + URLS.MOVIE_DETAILS_URL
+                + movieId
+                + URLS.MOVIE_SIMILAR_URL
+                + MainActivity.API_KEY_REQUEST
+                + URLS.API_KEY
+                + MainActivity.PAGE_REQUEST
+                + page;
+        StringRequest stringRequest =
+                new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        showSimilar(response);
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        error.printStackTrace();
+                    }
+                });
         queue.add(stringRequest);
     }
 
     public void showDetails() {
-        titleView.setText(movieDetails.getTitle());
+        textTitle.setText(movieDetails.getTitle());
         Picasso.get()
                 .load(URLS.IMAGE_BASE_URL + movieDetails.getCoverPath())
-                .into(coverImage);
+                .into(imageCover);
         Picasso.get()
                 .load(URLS.IMAGE_BASE_URL + movieDetails.getPosterPath())
-                .into(posterImage);
-        overviewView.setText(movieDetails.getOverview());
-        releaseDateView.setText(movieDetails.getReleaseDate());
+                .into(imagePoster);
+        textOverview.setText(movieDetails.getOverview());
+        textReleaseDate.setText(movieDetails.getReleaseDate());
         String genres = movieDetails.getGenres().toString();
-        genresView.setText(genres.substring(1, genres.length() - 1));
+        textGenres.setText(genres.substring(1, genres.length() - 1));
     }
 
-    public void showSimilar(String response){
+    public void showSimilar(String response) {
         LayoutInflater layoutInflater = LayoutInflater.from(this);
         try {
             myData = new JSONObject(response);
-            JSONArray array = (JSONArray) myData.get("results");
+            JSONArray array = (JSONArray) myData.get(DATA_RESULTS);
             if (array.length() == 0) return;
             for (int i = 0; i < array.length(); i++) {
-                JSONObject  object = (JSONObject) array.get(i);
-                final String id = object.getString("id");
-                View v = layoutInflater.inflate(R.layout.similar_movies_layout, similarLinearLayout, false);
-                similarLinearLayout.addView(v);
+                JSONObject object = (JSONObject) array.get(i);
+                final String id = object.getString(DATA_ID);
+                View v = layoutInflater.inflate(R.layout.similar_movies_layout, linearLayoutSimilarMovies, false);
+                linearLayoutSimilarMovies.addView(v);
                 v.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -173,7 +188,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
                     }
                 });
                 Picasso.get()
-                        .load(URLS.IMAGE_BASE_URL + object.getString("poster_path"))
+                        .load(URLS.IMAGE_BASE_URL + object.getString(DATA_POSTER_PATH))
                         .into((ImageView) v);
             }
         } catch (JSONException e) {
